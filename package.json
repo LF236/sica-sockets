@@ -1,5 +1,29 @@
 {
   "dependencies": {
-    "express": "^4.18.1"
-  }
+    "colors": "^1.4.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "socket.io": "^4.5.1"
+  },
+  "name": "sica-sockets",
+  "description": "Proyecto que maneja el uso de Sockets junto a un servidor de NodeJS, el objetivo es manejar notificaciones y alertas en tiempo real. Se aplicará en los sistemas del CAE.",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/hospital_cae/sica-sockets.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/hospital_cae/sica-sockets/issues"
+  },
+  "homepage": "https://gitlab.com/hospital_cae/sica-sockets#readme"
 }
