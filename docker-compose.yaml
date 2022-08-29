@@ -1,0 +1,19 @@
+version: "3"
+services:
+  app:
+    build:
+      args:
+        user: socket
+        uid: 1001
+      context: ./backend
+      dockerfile: Dockerfile
+    image: incidencias-back:2.0
+    container_name: sica4_socket
+    tty: true
+    expose:
+      - 7000
+    ports:
+      - 7000:7000
+    volumes:
+      - ./code:/app
+      - /etc/localtime:/etc/localtime:ro
