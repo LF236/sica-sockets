@@ -4,7 +4,7 @@ class SocketClient {
         this.nombre_completo = tokenDecoded.nombre_completo,
         this.sexo = tokenDecoded.sexo,
         this.matricula = tokenDecoded.matricula,
-        this.id_socket = id_socket
+        this.id_socket = [ id_socket ]
     }
 }
 
