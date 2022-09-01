@@ -10,10 +10,10 @@
   "name": "sica-sockets",
   "description": "Proyecto que maneja el uso de Sockets junto a un servidor de NodeJS, el objetivo es manejar notificaciones y alertas en tiempo real. Se aplicará en los sistemas del CAE.",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
+    "start": "node app.js",
+    "dev": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

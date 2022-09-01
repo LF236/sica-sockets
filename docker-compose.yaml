@@ -8,6 +8,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     image: incidencias-back:2.0
+    restart: always
     container_name: sica4_socket
     tty: true
     expose:
