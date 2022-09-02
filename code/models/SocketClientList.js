@@ -56,6 +56,10 @@ class SocketClientList {
         */
         delete this.clients[ `${ id_user }` ];
     }
+
+    getClientById( id_client ) {
+        return this.clients[ `${ id_client }` ];
+    }
 }
 
 module.exports = SocketClientList;

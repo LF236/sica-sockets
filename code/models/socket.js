@@ -21,6 +21,17 @@ class Socket {
                 this.clients.removeClient( socket.id );
                 // Send new list of clients
                 this.io.emit( 'current-clients', this.clients.getClientList() );
+            } );
+
+            socket.on( 'zumbido', data => {
+                const receptor = this.clients.getClientById( data.id_receptor );
+                receptor.id_socket.map( id_socket => {
+                    socket.broadcast.to( id_socket ).emit( 'get_zumbido', {
+                        modulo: 'Zumbido',
+                        msg: 'Te ha enviado un Zumbido &#1F921;',
+                        emisor: data.data_emisor // { nombre_completo, matricula }
+                    } );
+                } );
             } )
         } )
     }
