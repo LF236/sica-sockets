@@ -12,7 +12,6 @@ class Socket {
         this.io.on( 'connect', ( socket ) => {
             console.log( 'Cliente conectado'.red );            
             socket.on( 'gege', ( data ) => {
-                console.log( 'ALMACENANDO INFORMACIÓN DE SESION' );
                 // Sava Data
                 this.clients.addClient( data, socket.id );
                 // Send Data to All Clients
@@ -20,16 +19,17 @@ class Socket {
             } );
 
             socket.on( 'connectFromSica3', async ( data ) => {
+                // Get data from API SICA3 { id_usuario, nombre_completo, sexo, matricula }
                 const infoQuery = await getAuthUserInfo( parseInt( data.replace( '/', '' ) ) );
+                // Generar un token con la información recibida
                 const token = generateTokenFromInfoSica3( infoQuery );
-                this.clients.addClient( token, socket.id );
+                // Agregar el cliente a la lista de clientes                
+                this.clients.addClient( token, `sica3=${ socket.id }` );
                 console.log( this.clients.getClientList() );
                 // Send Data to All Clients
-                this.io.emit( 'current-clients', this.clients.getClientList() );
-                this.io.emit( 'dasdsadas', 'liuis fernando' );
-                // Get data from API SICA3 { id_usuario, nombre_completo, sexo, matricula }
-
+                this.io.emit( 'current-clients', this.clients.getClientList() );                
             } );
+
             socket.on( 'disconnect', () => {
                 this.clients.removeClient( socket.id );
                 // Send new list of clients
