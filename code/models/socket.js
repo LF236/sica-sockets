@@ -27,7 +27,7 @@ class Socket {
                 this.clients.addClient( token, `sica3=${ socket.id }` );                
                 // Send Data to All Clients
                 this.io.emit( 'current-clients', this.clients.getClientList() );   
-                console.log( this.clients.clients );
+                // console.log( this.clients.clients );
             } );
 
             socket.on( 'disconnect', () => {
@@ -49,7 +49,7 @@ class Socket {
 
             // EVENTOS DE SICA 3
             socket.on( 'sica3-nuevo-ingreso', data => {
-                console.log( 'SE AGREGO UN NUEVO PACIENTE' );
+                this.io.emit( 'nuevo-ingreso', {} );
             } );
 
             socket.on( 'getAllOnline', ( ) => {
