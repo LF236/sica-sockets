@@ -46,6 +46,15 @@ class Socket {
                     } );
                 } );
             } )
+
+            // EVENTOS DE SICA 3
+            socket.on( 'sica3-nuevo-ingreso', data => {
+                console.log( 'SE AGREGO UN NUEVO PACIENTE' );
+            } );
+
+            socket.on( 'getAllOnline', ( ) => {
+                console.log( 'test' );
+            } )
         } )
     }
 }
