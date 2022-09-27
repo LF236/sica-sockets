@@ -17,9 +17,7 @@ class SocketClientList {
             if( isUserAdd ) {
                 // console.log( 'YA HAY UNA CONEXIÓN VIGENTE' );
                 return this.clients[ newClient.id_usuario ].id_socket.push( id_socket );
-                
             }
-
             /*
                 Si no hay una conexión vigente solo agregamos el objeto del nuevo cliente
             */
@@ -30,8 +28,13 @@ class SocketClientList {
     getClientList() {
         let arr = [];
         Object.keys( this.clients ).map( key => {
-
-            arr.push( this.clients[ key ] );
+            // Creamos una copia del objeto SIN TOCAR SU REFERENCIA
+            const auxObj = Object.assign( {} , this.clients[ key ] );
+            // Parseamos la lista de sockets conectados eliminando su prefijo de donde viene 'sica3' o 'sica4'
+            const aux = auxObj.id_socket.map( socket_id => socket_id.split( '=' )[ 1 ] );
+            // Cambiamos el valor de la variable id_socket a la nueva lista parseada
+            auxObj.id_socket = aux;
+            arr.push( auxObj );
         } );
         return arr;
     }
@@ -48,8 +51,8 @@ class SocketClientList {
             Si hay más de una instacia de Socket conectada ( el usuario con multiples pestañas )
             Eliminamos el Socket del arreglo del Sockets del objeto relacionado al usuario
         */
-        if( this.clients[ id_user ].id_socket.length > 1 ) {
-            return this.clients[ id_user ].id_socket = this.clients[ id_user ].id_socket.filter( item => item != id_socket );
+        if( this.clients[ id_user ].id_socket.length > 1 ) {            
+            return this.clients[ id_user ].id_socket = this.clients[ id_user ].id_socket.filter( item => !item.includes( id_socket ) );
         }
         /*
             Si solo existe un Socket se elimina directamente el elemento del objeto

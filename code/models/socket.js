@@ -13,7 +13,7 @@ class Socket {
             console.log( 'Cliente conectado'.red );            
             socket.on( 'gege', ( data ) => {
                 // Sava Data
-                this.clients.addClient( data, socket.id );
+                this.clients.addClient( data, `sica4=${ socket.id }` );
                 // Send Data to All Clients
                 this.io.emit( 'current-clients', this.clients.getClientList() );
             } );
@@ -24,10 +24,10 @@ class Socket {
                 // Generar un token con la información recibida
                 const token = generateTokenFromInfoSica3( infoQuery );
                 // Agregar el cliente a la lista de clientes                
-                this.clients.addClient( token, `sica3=${ socket.id }` );
-                console.log( this.clients.getClientList() );
+                this.clients.addClient( token, `sica3=${ socket.id }` );                
                 // Send Data to All Clients
-                this.io.emit( 'current-clients', this.clients.getClientList() );                
+                this.io.emit( 'current-clients', this.clients.getClientList() );   
+                console.log( this.clients.clients );
             } );
 
             socket.on( 'disconnect', () => {
