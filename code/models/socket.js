@@ -37,11 +37,14 @@ class Socket {
             } );
 
             socket.on( 'zumbido', data => {
+                console.log( 'ZUMBIDO' );
                 const receptor = this.clients.getClientById( data.id_receptor );
+                console.log( receptor );
                 receptor.id_socket.map( id_socket => {
-                    socket.broadcast.to( id_socket ).emit( 'get_zumbido', {
+                    console.log( id_socket.split( '=' )[ 0 ] );
+                    socket.broadcast.to( id_socket.split( '=' )[ 1 ] ).emit( 'get_zumbido', {
                         modulo: 'Zumbido',
-                        msg: 'Te ha enviado un Zumbido &#1F921; ',
+                        msg: 'Te ha enviado un Zumbido ✌',
                         emisor: data.data_emisor // { nombre_completo, matricula }
                     } );
                 } );
@@ -49,7 +52,11 @@ class Socket {
 
             // EVENTOS DE SICA 3
             socket.on( 'sica3-nuevo-ingreso', data => {
-                this.io.emit( 'nuevo-ingreso', {} );
+                this.io.emit( 'nuevo-ingreso', {
+                    'tipo_ingreso': data.tipo_ingreso,
+                    'id_cama' : data.id_cama,
+                    'id_paciente': data.id_paciente
+                } );
             } );
 
             socket.on( 'getAllOnline', ( ) => {
