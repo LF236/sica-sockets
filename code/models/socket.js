@@ -10,21 +10,24 @@ class Socket {
 
     socketEvents() {
         this.io.on( 'connect', ( socket ) => {
-            console.log( 'Cliente conectado'.red );            
+            console.log( 'Cliente conectado'.red );   
+            // LISTENER PARA CONECTAR CLIENTES DE SICA4         
             socket.on( 'gege', ( data ) => {
                 // Sava Data
-                this.clients.addClient( data, `sica4=${ socket.id }` );
+                this.clients.addClient( data, 'sica4', socket );
                 // Send Data to All Clients
                 this.io.emit( 'current-clients', this.clients.getClientList() );
             } );
 
+            // LISTENER PARA CONECTAR CLIENTES DE SICA3            
             socket.on( 'connectFromSica3', async ( data ) => {
                 // Get data from API SICA3 { id_usuario, nombre_completo, sexo, matricula }
                 const infoQuery = await getAuthUserInfo( parseInt( data.replace( '/', '' ) ) );
                 // Generar un token con la información recibida
                 const token = generateTokenFromInfoSica3( infoQuery );
                 // Agregar el cliente a la lista de clientes                
-                this.clients.addClient( token, `sica3=${ socket.id }` );                
+                // this.clients.addClient( token, `sica3=${ socket.id }` );                
+                this.clients.addClient( token, `sica3`, socket );                                
                 // Send Data to All Clients
                 this.io.emit( 'current-clients', this.clients.getClientList() );   
                 // console.log( this.clients.clients );
@@ -37,12 +40,9 @@ class Socket {
             } );
 
             socket.on( 'zumbido', data => {
-                console.log( 'ZUMBIDO' );
-                const receptor = this.clients.getClientById( data.id_receptor );
-                console.log( receptor );
-                receptor.id_socket.map( id_socket => {
-                    console.log( id_socket.split( '=' )[ 0 ] );
-                    socket.broadcast.to( id_socket.split( '=' )[ 1 ] ).emit( 'get_zumbido', {
+                const receptor = this.clients.getIdsSocketsByIdClient( data.id_receptor );                
+                receptor.map( id_socket => {
+                    socket.broadcast.to( id_socket ).emit( 'get_zumbido', {
                         modulo: 'Zumbido',
                         msg: 'Te ha enviado un Zumbido ✌',
                         emisor: data.data_emisor // { nombre_completo, matricula }
