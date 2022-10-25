@@ -52,6 +52,7 @@ class Socket {
 
             // EVENTOS DE SICA 3
             socket.on( 'sica3-nuevo-ingreso', data => {
+                console.log( 'FERNANDO' );
                 this.io.emit( 'nuevo-ingreso', {
                     'tipo_ingreso': data.tipo_ingreso,
                     'id_cama' : data.id_cama,
