@@ -54,11 +54,26 @@ class Socket {
             socket.on( 'sica3-nuevo-ingreso', data => {
                 console.log( 'FERNANDO' );
                 console.log( data );
-                this.io.emit( 'nuevo-ingreso', {
-                    'tipo_ingreso': data.tipo_ingreso,
-                    'id_cama' : data.id_cama,
-                    'id_paciente': data.id_paciente
-                } );
+                // SI LA DATA TIENE EL ATRIBUTO ACCION Y ES IGUAL A 1 QUIERE DECIR QUE VA A CONSULTA DE ADULTOS
+                if( data.accion == 1  ) {
+                    this.io.emit( 'nuevo-ingreso', {
+                        'tipo_ingreso': data.tipo_ingreso,
+                        'id_cama' : data.id_cama,
+                        'id_paciente': data.id_paciente,
+                        'clasificacion': data.clasificacion
+                    } );
+                }
+
+                // SI LA DATA ES IGUAL A UNDEFINED QUIERE DECIR QUE VIENE DE OTRO TIPO DE TRIAGE
+                if( data.accion == undefined ) {
+                    this.io.emit( 'nuevo-ingreso', {
+                        'tipo_ingreso': data.tipo_ingreso,
+                        'id_cama' : data.id_cama,
+                        'id_paciente': data.id_paciente,
+                    } );
+                }
+
+                
             } );
 
             socket.on( 'getAllOnline', ( ) => {
