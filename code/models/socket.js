@@ -11,6 +11,7 @@ class Socket {
     socketEvents() {
         this.io.on( 'connect', ( socket ) => {
             console.log( 'Cliente conectado'.red );   
+            // console.log( socket );
             // LISTENER PARA CONECTAR CLIENTES DE SICA4         
             socket.on( 'gege', ( data ) => {
                 // Sava Data
@@ -30,10 +31,11 @@ class Socket {
                 this.clients.addClient( token, `sica3`, socket );                                
                 // Send Data to All Clients
                 this.io.emit( 'current-clients', this.clients.getClientList() );   
-                // console.log( this.clients.clients );
+                // console.log( this.clients.clients );disconnect
             } );
 
             socket.on( 'disconnect', () => {
+                console.log( 'ELIMINANDO CLIENTE' );
                 this.clients.removeClient( socket.id );
                 // Send new list of clients
                 this.io.emit( 'current-clients', this.clients.getClientList() );
