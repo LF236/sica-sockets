@@ -9,12 +9,12 @@ services:
       dockerfile: Dockerfile
     image: incidencias-back:2.0
     restart: always
-    container_name: sica4_socket
+    container_name: sica4_socket-2
     tty: true
     expose:
       - 7000
     ports:
-      - 7000:7000
+      - 6002:7000
     volumes:
       - ./code:/app
       - /etc/localtime:/etc/localtime:ro

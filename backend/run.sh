@@ -3,4 +3,4 @@ sleep 15
 
 npm install
 
-pm2 start index.js
+pm2 start app.js
