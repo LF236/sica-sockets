@@ -63,7 +63,8 @@ class SocketClientList {
             Si hay más de una instacia de Socket conectada ( el usuario con multiples pestañas )
             Eliminamos el Socket del arreglo del Sockets del objeto relacionado al usuario
         */
-        if( this.clients[ id_user ].socket_list.length > 1 ) {            
+        // ----------------------------->LINEA PELIGROSA ---> PELIGRO ---> :c
+        if( this.clients[ id_user ].socket_list?.length > 1 ) {            
             // Creamos una nueva lista excluyendo el socket con el ID que se quiere eliminar
             // Esa lista se le asigna al atributo 'socket_list' del objeto del cliente
             return this.clients[ id_user ].socket_list = this.clients[ id_user ].socket_list.filter( socket_item => socket_item.id_conexion != id_socket );
