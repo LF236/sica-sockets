@@ -11,10 +11,10 @@ class Socket {
     socketEvents() {
         this.io.on( 'connect', ( socket ) => {
             console.log( 'Cliente conectado'.red );   
-            // console.log( socket );
             // LISTENER PARA CONECTAR CLIENTES DE SICA4         
             socket.on( 'gege', ( data ) => {
                 // Sava Data
+                // console.log( data );
                 this.clients.addClient( data, 'sica4', socket );
                 // Send Data to All Clients
                 this.io.emit( 'current-clients', this.clients.getClientList() );
@@ -22,6 +22,8 @@ class Socket {
 
             // LISTENER PARA CONECTAR CLIENTES DE SICA3            
             socket.on( 'connectFromSica3', async ( data ) => {
+                // console.log( 'SICA 3-----------' );
+                // console.log( data );
                 // Get data from API SICA3 { id_usuario, nombre_completo, sexo, matricula }
                 const infoQuery = await getAuthUserInfo( parseInt( data.replace( '/', '' ) ) );
                 // Generar un token con la información recibida

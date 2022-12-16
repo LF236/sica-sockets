@@ -12,6 +12,11 @@ class SocketClientList {
         const hora_conexion_socket = socket_info?.handshake.time;
         const socket_id = socket_info?.id;
         jtw.verify( token, 'lf236', ( err, decoded ) => {
+            if( err ) {
+                console.log( 'OMITIENDO CLIENTE' );
+                console.log( `TOKEN CADUCADO - IP: ${ dir_ip_client }` );
+                return;
+            }
             const newSocket = new SocketNodo( socket_id, dir_ip_client, origin, hora_conexion_socket );
             const newClient = new SocketClient( decoded, socket_id, newSocket );
             /*
