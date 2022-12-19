@@ -84,7 +84,8 @@ class SocketClientList {
                 Eliminamos el id del socket dentro del arreglo Sockets relacionado a un Usuario
             */
             // Si el usuario relacionado al "id_socket" fue encontrado
-            if( id_user ) {
+            // La validación de que si el id_user es igual a 0, se agrego de manera especial para el usuario administrador
+            if( id_user || id_user === 0 ) {
                 // ----------------------------->LINEA PELIGROSA ---> PELIGRO ---> :c
                 if( this.clients[ id_user ].socket_list?.length > 1 ) {            
                     // Creamos una nueva lista excluyendo el socket con el ID que se quiere eliminar
@@ -96,6 +97,8 @@ class SocketClientList {
                 */
                 return delete this.clients[ `${ id_user }` ];
             }
+            console.log( this.clients );
+
             console.log( 'EL SOCKET A ELIMINAR NO ESTA RELACIONADO CON ALGUN EMPLEADO' );
         } catch( err ) {
             console.log( `Error al eliminar el socket con el id: ${ id_socket } `.red )
