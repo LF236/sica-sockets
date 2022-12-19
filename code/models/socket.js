@@ -10,11 +10,11 @@ class Socket {
 
     socketEvents() {
         this.io.on( 'connect', ( socket ) => {
-            console.log( 'Cliente conectado'.red );   
+            // console.log( 'Nuevo Socket Conectado'.red );   
             // LISTENER PARA CONECTAR CLIENTES DE SICA4         
             socket.on( 'gege', ( data ) => {
+                console.log( `Cliente directo de SICA4: ${ socket.handshake.address }`.magenta );
                 // Sava Data
-                // console.log( data );
                 this.clients.addClient( data, 'sica4', socket );
                 // Send Data to All Clients
                 this.io.emit( 'current-clients', this.clients.getClientList() );
@@ -22,18 +22,18 @@ class Socket {
 
             // LISTENER PARA CONECTAR CLIENTES DE SICA3            
             socket.on( 'connectFromSica3', async ( data ) => {
-                // console.log( 'SICA 3-----------' );
-                // console.log( data );
+                console.log( `Cliente directo de SICA3: ${ socket.handshake.address }`.cyan );
                 // Get data from API SICA3 { id_usuario, nombre_completo, sexo, matricula }
-                const infoQuery = await getAuthUserInfo( parseInt( data.replace( '/', '' ) ) );
+                let requestInfoUsuarioFromSica3 = await getAuthUserInfo( parseInt( data.replace( '/', '' ) ) );
+                // SI EL USUARIO QUE SE QUIERE CONECTAR TIENE UN ID QUE NO EXISTE, ROMPEMOS LA RUTINA
+                if( !requestInfoUsuarioFromSica3 ) return;
+                const infoQuery = requestInfoUsuarioFromSica3;
                 // Generar un token con la información recibida
                 const token = generateTokenFromInfoSica3( infoQuery );
                 // Agregar el cliente a la lista de clientes                
-                // this.clients.addClient( token, `sica3=${ socket.id }` );                
                 this.clients.addClient( token, `sica3`, socket );                                
                 // Send Data to All Clients
                 this.io.emit( 'current-clients', this.clients.getClientList() );   
-                // console.log( this.clients.clients );disconnect
             } );
 
             socket.on( 'disconnect', () => {
@@ -56,8 +56,6 @@ class Socket {
 
             // EVENTOS DE SICA 3
             socket.on( 'sica3-nuevo-ingreso', data => {
-                console.log( 'FERNANDO' );
-                console.log( data );
                 // SI LA DATA TIENE EL ATRIBUTO ACCION Y ES IGUAL A 1 QUIERE DECIR QUE VA A CONSULTA DE ADULTOS
                 if( data.accion == 1  ) {
                     this.io.emit( 'nuevo-ingreso', {
@@ -76,8 +74,6 @@ class Socket {
                         'id_paciente': data.id_paciente,
                     } );
                 }
-
-                
             } );
 
             socket.on( 'getAllOnline', ( ) => {

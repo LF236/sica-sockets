@@ -1,4 +1,5 @@
 const axios = require( 'axios' );
+// RECIBE EL ID del usuario de SICA
 const getAuthUserInfo = ( id_usuario ) => {
     return new Promise( async( resolve, reject ) => {
         try {
