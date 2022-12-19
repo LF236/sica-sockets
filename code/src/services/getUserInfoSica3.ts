@@ -1,6 +1,6 @@
 const axios = require( 'axios' );
 // RECIBE EL ID del usuario de SICA
-const getAuthUserInfo = ( id_usuario ) => {
+const getAuthUserInfo = ( id_usuario : number ) : Promise<void> => {
     return new Promise( async( resolve, reject ) => {
         try {
             const user = await axios.get( `${ process.env.IP_SICA }/api/incidencias/getInfoUsuario?id=${ id_usuario }` );

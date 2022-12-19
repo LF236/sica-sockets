@@ -1,18 +1,21 @@
+import { Server, Socket } from 'socket.io';
 const generateTokenFromInfoSica3 = require('../services/generateTokenFromInfoSica3');
 const getAuthUserInfo = require('../services/getUserInfoSica3');
 const SocketClientList = require( './SocketClientList' );
-class Socket {
-    constructor( io ) {
+class SocketServer {
+    private io : Server;
+    public clients : any;
+    constructor( io : Server ) {
         this.io = io;
         this.clients = new SocketClientList();
         this.socketEvents();
     }
 
     socketEvents() {
-        this.io.on( 'connect', ( socket ) => {
+        this.io.on( 'connect', ( socket: Socket ) => {
             // console.log( 'Nuevo Socket Conectado'.red );   
             // LISTENER PARA CONECTAR CLIENTES DE SICA4         
-            socket.on( 'gege', ( data ) => {
+            socket.on( 'gege', ( data: string ) => {
                 console.log( `Cliente directo de SICA4: ${ socket.handshake.address }`.magenta );
                 // Sava Data
                 this.clients.addClient( data, 'sica4', socket );
@@ -21,7 +24,7 @@ class Socket {
             } );
 
             // LISTENER PARA CONECTAR CLIENTES DE SICA3            
-            socket.on( 'connectFromSica3', async ( data ) => {
+            socket.on( 'connectFromSica3', async ( data: string ) => {
                 console.log( `Cliente directo de SICA3: ${ socket.handshake.address }`.cyan );
                 // Get data from API SICA3 { id_usuario, nombre_completo, sexo, matricula }
                 let requestInfoUsuarioFromSica3 = await getAuthUserInfo( parseInt( data.replace( '/', '' ) ) );
@@ -45,7 +48,7 @@ class Socket {
 
             socket.on( 'zumbido', data => {
                 const receptor = this.clients.getIdsSocketsByIdClient( data.id_receptor );                
-                receptor.map( id_socket => {
+                receptor.map( ( id_socket: string ) => {
                     socket.broadcast.to( id_socket ).emit( 'get_zumbido', {
                         modulo: 'Zumbido',
                         msg: 'Te ha enviado un Zumbido ✌',
@@ -83,4 +86,4 @@ class Socket {
     }
 }
 
-module.exports = Socket;
+export default SocketServer;
