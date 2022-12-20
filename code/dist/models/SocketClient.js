@@ -9,5 +9,5 @@ class SocketClient {
             this.socket_list = [socket]; // NUEVA IMPLEMENTACION
     }
 }
-module.exports = SocketClient;
+exports.default = SocketClient;
 //# sourceMappingURL=SocketClient.js.map

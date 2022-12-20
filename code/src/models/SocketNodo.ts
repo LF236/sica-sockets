@@ -1,8 +1,8 @@
 class SocketNodo {
-    private id_conexion : string;
-    private dir_ip : string;
-    private origin : string;
-    private fecha_conexion_socket : string;
+    public id_conexion : string;
+    public dir_ip : string;
+    public origin : string;
+    public fecha_conexion_socket : string;
     
     constructor( id_conexion: string, dir_ip: string, origin: string, date_conexion: string ) {
         this.id_conexion = id_conexion;

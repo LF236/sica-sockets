@@ -1,20 +1,22 @@
+import { Socket } from 'socket.io';
+import SocketClient from "./SocketClient";
+import SocketNodo from "./SocketNodo";
+import jwt, { Secret } from 'jsonwebtoken';
 require( 'colors' );
-const jtw = require( 'jsonwebtoken' );
-const SocketClient = require('./SocketClient');
-const SocketNodo = require('./SocketNodo');
-
+const SECRET_KEY : Secret = `${ process.env.SECRET_KEY }`;
 class SocketClientList {
+    public clients : Record<string, SocketClient>;
     constructor() {
         this.clients = {};
     }
 
-    addClient( token, origin, socket_info ) {
+    addClient( token : string, origin : string, socket_info: Socket ) {
         try {
             // Extraer información del Socket conectado
             const dir_ip_client = socket_info?.handshake.address;
             const hora_conexion_socket = socket_info?.handshake.time;
             const socket_id = socket_info?.id;
-            jtw.verify( token, 'lf236', ( err, decoded ) => {
+            jwt.verify( token, SECRET_KEY, ( err, decoded: any ) => {
                 if( err ) {
                     console.log( 'OMITIENDO CLIENTE' );
                     console.log( `TOKEN CADUCADO - IP: ${ dir_ip_client }` );
@@ -46,34 +48,37 @@ class SocketClientList {
 
     getClientList() {
         try{
-            let arr = [];
+            let arr : Array<SocketClient> = [];
             Object.keys( this.clients ).map( key => {
                 // Creamos una copia del objeto SIN TOCAR SU REFERENCIA
-                const auxObj = Object.assign( {} , this.clients[ key ] );
+                // const auxObj = identity<SocketClient>;
+                const auxObj : SocketClient = Object.assign( {} , this.clients[ key ] );
                 /*
                     Filtramos una lista de los sockets de SICA3 y SICA4
                     Despues del filtrclo obtenemos unicamente el ID del Socket
+                    Use el tipo ANY de TypeScript ya que estamos agregando propiedaes adicionales que no pertenecen al SocketClient
                 */
-                auxObj[ 'socket_list_sica3' ] = auxObj.socket_list.filter( socket_item => socket_item.origin == 'sica3' );
-                auxObj[ 'socket_list_sica3' ] = auxObj[ 'socket_list_sica3' ].map( socket_item => socket_item.id_conexion );
-                auxObj[ 'socket_list_sica4' ] = auxObj.socket_list.filter( socket_item => socket_item.origin == 'sica4' );
-                auxObj[ 'socket_list_sica4' ] = auxObj[ 'socket_list_sica4' ].map( socket_item => socket_item.id_conexion );
+                ( auxObj as any )[ 'socket_list_sica3' ] = auxObj.socket_list.filter( ( socket_item: SocketNodo ) => socket_item.origin == 'sica3' );
+                ( auxObj as any )[ 'socket_list_sica3' ] = ( auxObj as any )[ 'socket_list_sica3' ].map( ( socket_item: SocketNodo ) => socket_item.id_conexion );
+                ( auxObj as any )[ 'socket_list_sica4' ] = auxObj.socket_list.filter( ( socket_item: SocketNodo ) => socket_item.origin == 'sica4' );
+                ( auxObj as any )[ 'socket_list_sica4' ] = ( auxObj as any )[ 'socket_list_sica4' ].map( ( socket_item: SocketNodo ) => socket_item.id_conexion );
                 // LISTA CON LOS ID DE TODOS LOS SOCKETS
-                auxObj[ 'id_socket' ] = auxObj.socket_list.map( socket_item => socket_item.id_conexion );
+                ( auxObj as any )[ 'id_socket' ] = auxObj.socket_list.map( ( socket_item: SocketNodo ) => socket_item.id_conexion );
                 arr.push( auxObj );
             } );
             return arr;
         } catch( err ) {
             console.log( 'Error al obtener la lista de clientes' );
             console.log( err );
+            return [];
         }
     }
 
-    removeClient( id_socket ) {
+    removeClient( id_socket: string ) {
         try {
             let id_user = null;
             // Buscamos el id del usuario dentro de la lista de objetos comparando los socket relacionados al objeto (usuario)
-            this.getClientList().map( cli => {
+            this.getClientList().map( ( cli: any ) => {
                 // Buscamos el la lista de TODOS los ids de sockets relaciones al cliente
                 if( cli.id_socket.includes( id_socket ) ) {
                     id_user = cli.id_usuario;
@@ -105,7 +110,7 @@ class SocketClientList {
         }
     }
 
-    getClientById( id_client ) {
+    getClientById( id_client: number ) {
         try{
             return this.clients[ `${ id_client }` ];
         } catch( err ) {
@@ -113,7 +118,7 @@ class SocketClientList {
         }
     }
 
-    getIdsSocketsByIdClient( id_client ) {
+    getIdsSocketsByIdClient( id_client: number ) {
         try{
             return this.clients[ `${ id_client }` ].socket_list.map( socket_item => socket_item.id_conexion );
         } catch( err ) {

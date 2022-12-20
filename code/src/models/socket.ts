@@ -1,4 +1,6 @@
 import { Server, Socket } from 'socket.io';
+import { InterfaceNuevoIngresoHospitalario } from '../interfaces/eventOnSica3NuevoIngreso';
+import { InterfaceZumbido } from '../interfaces/eventOnZumbido';
 const generateTokenFromInfoSica3 = require('../services/generateTokenFromInfoSica3');
 const getAuthUserInfo = require('../services/getUserInfoSica3');
 const SocketClientList = require( './SocketClientList' );
@@ -46,7 +48,7 @@ class SocketServer {
                 this.io.emit( 'current-clients', this.clients.getClientList() );
             } );
 
-            socket.on( 'zumbido', data => {
+            socket.on( 'zumbido', (  data : InterfaceZumbido ) => {
                 const receptor = this.clients.getIdsSocketsByIdClient( data.id_receptor );                
                 receptor.map( ( id_socket: string ) => {
                     socket.broadcast.to( id_socket ).emit( 'get_zumbido', {
@@ -58,9 +60,9 @@ class SocketServer {
             } )
 
             // EVENTOS DE SICA 3
-            socket.on( 'sica3-nuevo-ingreso', data => {
+            socket.on( 'sica3-nuevo-ingreso', ( data: InterfaceNuevoIngresoHospitalario ) => {
                 // SI LA DATA TIENE EL ATRIBUTO ACCION Y ES IGUAL A 1 QUIERE DECIR QUE VA A CONSULTA DE ADULTOS
-                if( data.accion == 1  ) {
+                if( data.accion == '1'  ) {
                     this.io.emit( 'nuevo-ingreso', {
                         'tipo_ingreso': data.tipo_ingreso,
                         'id_cama' : data.id_cama,

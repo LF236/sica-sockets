@@ -51,7 +51,7 @@ class SocketServer {
                 // Send new list of clients
                 this.io.emit('current-clients', this.clients.getClientList());
             });
-            socket.on('zumbido', data => {
+            socket.on('zumbido', (data) => {
                 const receptor = this.clients.getIdsSocketsByIdClient(data.id_receptor);
                 receptor.map((id_socket) => {
                     socket.broadcast.to(id_socket).emit('get_zumbido', {
@@ -62,9 +62,9 @@ class SocketServer {
                 });
             });
             // EVENTOS DE SICA 3
-            socket.on('sica3-nuevo-ingreso', data => {
+            socket.on('sica3-nuevo-ingreso', (data) => {
                 // SI LA DATA TIENE EL ATRIBUTO ACCION Y ES IGUAL A 1 QUIERE DECIR QUE VA A CONSULTA DE ADULTOS
-                if (data.accion == 1) {
+                if (data.accion == '1') {
                     this.io.emit('nuevo-ingreso', {
                         'tipo_ingreso': data.tipo_ingreso,
                         'id_cama': data.id_cama,

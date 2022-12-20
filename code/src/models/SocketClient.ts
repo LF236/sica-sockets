@@ -2,11 +2,11 @@ import SocketNodo from "./SocketNodo";
 import { InterfaceTokenFromSica } from "../interfaces/tokens";
 
 class SocketClient {
-    private id_usuario: string;
-    private nombre_completo: string;
-    private sexo: string;
-    private matricula: string;
-    private socket_list: Array<SocketNodo>;
+    public id_usuario: number;
+    public nombre_completo: string;
+    public sexo: string;
+    public matricula: string;
+    public socket_list: Array<SocketNodo>;
     
     constructor( tokenDecoded : InterfaceTokenFromSica, id_socket: string, socket: SocketNodo ) {
         this.id_usuario = tokenDecoded.id_usuario,
@@ -17,4 +17,4 @@ class SocketClient {
     }
 }
 
-module.exports = SocketClient;
+export default SocketClient;

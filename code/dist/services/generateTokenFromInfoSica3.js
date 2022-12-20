@@ -1,6 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const jwt = require('jsonwebtoken');
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const SECRET_KEY = `${process.env.SECRET_KEY}`;
 const generateTokenFromInfoSica3 = (infoQuery) => {
     let aux = {
         id_usuario: infoQuery.user_info.id_empleado,
@@ -10,7 +14,7 @@ const generateTokenFromInfoSica3 = (infoQuery) => {
         matricula: infoQuery.empleado_info ? infoQuery.empleado_info.matricula : ''
     };
     // Una vez que tenemos la información lista creamos un token de acceso
-    const jwtToken = jwt.sign(aux, 'lf236', {
+    const jwtToken = jsonwebtoken_1.default.sign(aux, SECRET_KEY, {
         expiresIn: 108000
     });
     return jwtToken;

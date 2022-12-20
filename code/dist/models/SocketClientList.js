@@ -1,8 +1,13 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const SocketClient_1 = __importDefault(require("./SocketClient"));
+const SocketNodo_1 = __importDefault(require("./SocketNodo"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 require('colors');
-const jtw = require('jsonwebtoken');
-const SocketClient = require('./SocketClient');
-const SocketNodo = require('./SocketNodo');
+const SECRET_KEY = `${process.env.SECRET_KEY}`;
 class SocketClientList {
     constructor() {
         this.clients = {};
@@ -13,16 +18,16 @@ class SocketClientList {
             const dir_ip_client = socket_info === null || socket_info === void 0 ? void 0 : socket_info.handshake.address;
             const hora_conexion_socket = socket_info === null || socket_info === void 0 ? void 0 : socket_info.handshake.time;
             const socket_id = socket_info === null || socket_info === void 0 ? void 0 : socket_info.id;
-            jtw.verify(token, 'lf236', (err, decoded) => {
+            jsonwebtoken_1.default.verify(token, SECRET_KEY, (err, decoded) => {
                 if (err) {
                     console.log('OMITIENDO CLIENTE');
                     console.log(`TOKEN CADUCADO - IP: ${dir_ip_client}`);
                     return;
                 }
                 // Nueva instancia de Socket
-                const newSocket = new SocketNodo(socket_id, dir_ip_client, origin, hora_conexion_socket);
+                const newSocket = new SocketNodo_1.default(socket_id, dir_ip_client, origin, hora_conexion_socket);
                 // Nueva instancia de cliente
-                const newClient = new SocketClient(decoded, socket_id, newSocket);
+                const newClient = new SocketClient_1.default(decoded, socket_id, newSocket);
                 /*
                     Verifica que no exista ya una conexión activa ( esto se aplica para cuando el usuario abra sesión en diferentes pestañas
                     y podamos notificar a todas las pestañas )
@@ -48,17 +53,19 @@ class SocketClientList {
             let arr = [];
             Object.keys(this.clients).map(key => {
                 // Creamos una copia del objeto SIN TOCAR SU REFERENCIA
+                // const auxObj = identity<SocketClient>;
                 const auxObj = Object.assign({}, this.clients[key]);
                 /*
                     Filtramos una lista de los sockets de SICA3 y SICA4
                     Despues del filtrclo obtenemos unicamente el ID del Socket
+                    Use el tipo ANY de TypeScript ya que estamos agregando propiedaes adicionales que no pertenecen al SocketClient
                 */
-                auxObj['socket_list_sica3'] = auxObj.socket_list.filter(socket_item => socket_item.origin == 'sica3');
-                auxObj['socket_list_sica3'] = auxObj['socket_list_sica3'].map(socket_item => socket_item.id_conexion);
-                auxObj['socket_list_sica4'] = auxObj.socket_list.filter(socket_item => socket_item.origin == 'sica4');
-                auxObj['socket_list_sica4'] = auxObj['socket_list_sica4'].map(socket_item => socket_item.id_conexion);
+                auxObj['socket_list_sica3'] = auxObj.socket_list.filter((socket_item) => socket_item.origin == 'sica3');
+                auxObj['socket_list_sica3'] = auxObj['socket_list_sica3'].map((socket_item) => socket_item.id_conexion);
+                auxObj['socket_list_sica4'] = auxObj.socket_list.filter((socket_item) => socket_item.origin == 'sica4');
+                auxObj['socket_list_sica4'] = auxObj['socket_list_sica4'].map((socket_item) => socket_item.id_conexion);
                 // LISTA CON LOS ID DE TODOS LOS SOCKETS
-                auxObj['id_socket'] = auxObj.socket_list.map(socket_item => socket_item.id_conexion);
+                auxObj['id_socket'] = auxObj.socket_list.map((socket_item) => socket_item.id_conexion);
                 arr.push(auxObj);
             });
             return arr;
@@ -66,6 +73,7 @@ class SocketClientList {
         catch (err) {
             console.log('Error al obtener la lista de clientes');
             console.log(err);
+            return [];
         }
     }
     removeClient(id_socket) {
@@ -73,7 +81,7 @@ class SocketClientList {
         try {
             let id_user = null;
             // Buscamos el id del usuario dentro de la lista de objetos comparando los socket relacionados al objeto (usuario)
-            this.getClientList().map(cli => {
+            this.getClientList().map((cli) => {
                 // Buscamos el la lista de TODOS los ids de sockets relaciones al cliente
                 if (cli.id_socket.includes(id_socket)) {
                     id_user = cli.id_usuario;

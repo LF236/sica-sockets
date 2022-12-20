@@ -1,7 +1,8 @@
-import { InterfaceInfoUsuarioSica3 } from "../interfaces/reqGetInfoUsuarioSica3";
-import { InterfaceTokenFromSica } from "../interfaces/tokens";
+import { InterfaceInfoUsuarioSica3 } from '../interfaces/reqGetInfoUsuarioSica3';
+import { InterfaceTokenFromSica } from '../interfaces/tokens';
+import jwt, { Secret } from 'jsonwebtoken';
 
-const jwt = require( 'jsonwebtoken' );
+const SECRET_KEY : Secret = `${ process.env.SECRET_KEY }`;
 const generateTokenFromInfoSica3 = ( infoQuery : InterfaceInfoUsuarioSica3 ) : string => {
     let aux : InterfaceTokenFromSica = {
         id_usuario: infoQuery.user_info.id_empleado,
@@ -14,7 +15,7 @@ const generateTokenFromInfoSica3 = ( infoQuery : InterfaceInfoUsuarioSica3 ) : s
     // Una vez que tenemos la información lista creamos un token de acceso
     const jwtToken : string = jwt.sign(
         aux,
-        'lf236',
+        SECRET_KEY,
         {
             expiresIn: 108000
         }
