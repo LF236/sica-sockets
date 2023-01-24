@@ -12,7 +12,7 @@ class Servidor {
     constructor() {
         this.app = (0, express_1.default)();
         this.port = parseInt(`${process.env.PORT}`);
-        this.server = http_1.default.createServer(this.app);
+        this.server = http_1.default.createServer();
         this.io = socket_io_1.default(this.server, { /* Config */});
     }
     middlewares() {
@@ -25,7 +25,7 @@ class Servidor {
         this.middlewares();
         this.configurarSockets();
         this.server.listen(this.port, () => {
-            console.log(`Server Socket ready in http://localhost:${this.port}`.america);
+            console.log(`Server Socket ready in https://localhost:${this.port}`.america);
         });
     }
 }

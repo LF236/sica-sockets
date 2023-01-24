@@ -1,6 +1,10 @@
 import colors from 'colors';
 import express, { Express } from 'express';
+import { readFileSync } from 'fs';
+import path from 'path';
+
 import http, {  } from 'http';
+import { createServer } from 'https';
 import io, { Server } from 'socket.io';
 import cors from 'cors';
 import SocketServer from './socket';
@@ -14,7 +18,7 @@ class Servidor {
     constructor() {
         this.app = express();
         this.port = parseInt( `${ process.env.PORT }` );
-        this.server = http.createServer( this.app );
+        this.server = http.createServer();
         this.io = (io as any )( this.server, { /* Config */ } );
     }
 
@@ -30,7 +34,7 @@ class Servidor {
         this.middlewares();
         this.configurarSockets();
         this.server.listen( this.port, () => {
-            console.log( `Server Socket ready in http://localhost:${ this.port }`.america );
+            console.log( `Server Socket ready in https://localhost:${ this.port }`.america );
         } )
     }
 }
