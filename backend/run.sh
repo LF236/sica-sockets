@@ -3,4 +3,4 @@ sleep 15
 
 npm install
 
-pm2 start /app/app.js
+pm2 start /app/dist/app.js
