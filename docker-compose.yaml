@@ -16,5 +16,6 @@ services:
     ports:
       - 6002:7000
     volumes:
-      - ./code:/app
+      - ./code/dist:/app
       - /etc/localtime:/etc/localtime:ro
+      - ./cert:/cert

@@ -8,6 +8,7 @@ import { createServer } from 'https';
 import io, { Server } from 'socket.io';
 import cors from 'cors';
 import SocketServer from './socket';
+import fs from 'fs';
 
 class Servidor {
     private app : Express;
@@ -18,7 +19,12 @@ class Servidor {
     constructor() {
         this.app = express();
         this.port = parseInt( `${ process.env.PORT }` );
-        this.server = http.createServer();
+        this.server = createServer(
+            {
+                cert: fs.readFileSync('/cert/ssaver.gob.mx.crt'),
+                key: fs.readFileSync('/cert/ssaver.gob.mx.key')
+            }
+        );
         this.io = (io as any )( this.server, { /* Config */ } );
     }
 
