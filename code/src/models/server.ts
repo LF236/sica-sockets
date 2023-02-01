@@ -19,12 +19,14 @@ class Servidor {
     constructor() {
         this.app = express();
         this.port = parseInt( `${ process.env.PORT }` );
-        this.server = createServer(
-            {
-                cert: fs.readFileSync('/cert/ssaver.gob.mx.crt'),
-                key: fs.readFileSync('/cert/ssaver.gob.mx.key')
-            }
-        );
+        this.server = process.env.ENVIRONMENT == 'productivo'
+            ? createServer(
+                    {
+                        cert: fs.readFileSync('/cert/ssaver.gob.mx.crt'),
+                        key: fs.readFileSync('/cert/ssaver.gob.mx.key')
+                    }
+                ) 
+            : http.createServer( this.app );
         this.io = (io as any )( this.server, { /* Config */ } );
     }
 
@@ -40,7 +42,9 @@ class Servidor {
         this.middlewares();
         this.configurarSockets();
         this.server.listen( this.port, () => {
-            console.log( `Server Socket ready in https://localhost:${ this.port }`.america );
+            process.env.ENVIRONMENT == 'productivo'
+                                        ? console.log( `Server Socket Productivo ready in https://socket.ssaver.gob.mx:${ this.port }`.america )
+                                        : console.log( `Server Socket Pruebas ready in http://localhost:${ this.port }`.rainbow );
         } )
     }
 }

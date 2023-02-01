@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const http_1 = __importDefault(require("http"));
 const https_1 = require("https");
 const socket_io_1 = __importDefault(require("socket.io"));
 const cors_1 = __importDefault(require("cors"));
@@ -13,10 +14,12 @@ class Servidor {
     constructor() {
         this.app = (0, express_1.default)();
         this.port = parseInt(`${process.env.PORT}`);
-        this.server = (0, https_1.createServer)({
-            cert: fs_1.default.readFileSync('/cert/ssaver.gob.mx.crt'),
-            key: fs_1.default.readFileSync('/cert/ssaver.gob.mx.key')
-        });
+        this.server = process.env.ENVIRONMENT == 'productivo'
+            ? (0, https_1.createServer)({
+                cert: fs_1.default.readFileSync('/cert/ssaver.gob.mx.crt'),
+                key: fs_1.default.readFileSync('/cert/ssaver.gob.mx.key')
+            })
+            : http_1.default.createServer(this.app);
         this.io = socket_io_1.default(this.server, { /* Config */});
     }
     middlewares() {
@@ -29,7 +32,9 @@ class Servidor {
         this.middlewares();
         this.configurarSockets();
         this.server.listen(this.port, () => {
-            console.log(`Server Socket ready in https://localhost:${this.port}`.america);
+            process.env.ENVIRONMENT == 'productivo'
+                ? console.log(`Server Socket Productivo ready in https://socket.ssaver.gob.mx:${this.port}`.america)
+                : console.log(`Server Socket Pruebas ready in http://localhost:${this.port}`.rainbow);
         });
     }
 }
