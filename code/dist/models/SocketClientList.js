@@ -20,6 +20,7 @@ class SocketClientList {
             const socket_id = socket_info === null || socket_info === void 0 ? void 0 : socket_info.id;
             jsonwebtoken_1.default.verify(token, SECRET_KEY, (err, decoded) => {
                 if (err) {
+                    console.log(err);
                     console.log('OMITIENDO CLIENTE');
                     console.log(`TOKEN CADUCADO - IP: ${dir_ip_client}`);
                     return;

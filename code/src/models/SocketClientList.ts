@@ -18,6 +18,7 @@ class SocketClientList {
             const socket_id = socket_info?.id;
             jwt.verify( token, SECRET_KEY, ( err, decoded: any ) => {
                 if( err ) {
+                    console.log( err );
                     console.log( 'OMITIENDO CLIENTE' );
                     console.log( `TOKEN CADUCADO - IP: ${ dir_ip_client }` );
                     return;

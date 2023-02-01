@@ -20,7 +20,7 @@ class SocketServer {
     }
     socketEvents() {
         this.io.on('connect', (socket) => {
-            // console.log( 'Nuevo Socket Conectado'.red );   
+            // console.log( socket );
             // LISTENER PARA CONECTAR CLIENTES DE SICA4         
             socket.on('gege', (data) => {
                 console.log(`Cliente directo de SICA4: ${socket.handshake.address}`.magenta);
