@@ -20,14 +20,18 @@ class SocketServer {
     }
     socketEvents() {
         this.io.on('connect', (socket) => {
-            // console.log( socket );
-            // LISTENER PARA CONECTAR CLIENTES DE SICA4         
+            console.log('NUEVO CONEXION');
+            console.log(socket.id);
+            socket.emit('current-clients', this.clients.getClientList());
+            // LISTENER PARA CONECTAR CLIENTES DE SICA4     
             socket.on('gege', (data) => {
                 console.log(`Cliente directo de SICA4: ${socket.handshake.address}`.magenta);
                 // Sava Data
-                this.clients.addClient(data, 'sica4', socket);
+                const newClient = this.clients.addClient(data, 'sica4', socket);
+                this.io.emit('new-client', newClient);
+                console.log(this.clients.getClientList());
                 // Send Data to All Clients
-                this.io.emit('current-clients', this.clients.getClientList());
+                // this.io.emit( 'current-clients', this.clients.getClientList() );
             });
             // LISTENER PARA CONECTAR CLIENTES DE SICA3            
             socket.on('connectFromSica3', (data) => __awaiter(this, void 0, void 0, function* () {
@@ -43,13 +47,15 @@ class SocketServer {
                 // Agregar el cliente a la lista de clientes                
                 this.clients.addClient(token, `sica3`, socket);
                 // Send Data to All Clients
-                this.io.emit('current-clients', this.clients.getClientList());
+                // this.io.emit( 'current-clients', this.clients.getClientList() );   
             }));
             socket.on('disconnect', () => {
                 console.log('ELIMINANDO CLIENTE');
-                this.clients.removeClient(socket.id);
+                let aux = this.clients.removeClient(socket.id);
+                console.log(aux);
+                this.io.emit('drop-client', aux);
                 // Send new list of clients
-                this.io.emit('current-clients', this.clients.getClientList());
+                // this.io.emit( 'current-clients', this.clients.getClientList() );
             });
             socket.on('zumbido', (data) => {
                 const receptor = this.clients.getIdsSocketsByIdClient(data.id_receptor);

@@ -4,6 +4,20 @@ import SocketNodo from "./SocketNodo";
 import jwt, { Secret } from 'jsonwebtoken';
 require( 'colors' );
 const SECRET_KEY : Secret = `${ process.env.SECRET_KEY }`;
+interface DropUseMsgInterface {
+    msg: 'ALL' | 'ONE';
+    id_user: number;
+    id_socket: string;
+}
+
+interface AddUserMsgInterface {
+    msg: 'NEW' | 'APPEND';
+    id_conection: any;
+    conextion_info: any;
+    id_user: string | number;
+    user_all: any;
+}
+
 class SocketClientList {
     public clients : Record<string, SocketClient>;
     constructor() {
@@ -16,6 +30,7 @@ class SocketClientList {
             const dir_ip_client = socket_info?.handshake.address;
             const hora_conexion_socket = socket_info?.handshake.time;
             const socket_id = socket_info?.id;
+            let nuevoCliente : AddUserMsgInterface | null = null;
             jwt.verify( token, SECRET_KEY, ( err, decoded: any ) => {
                 if( err ) {
                     console.log( err );
@@ -33,14 +48,32 @@ class SocketClientList {
                     Si ya hay una conexión con el nuevo SocketClient a la lista del vigente del usuario
                 */
                 let isUserExists = Object.keys( this.clients ).includes( `${ newClient.id_usuario }` );
-                if( isUserExists ) {
-                    return this.clients[ newClient.id_usuario ].socket_list.push( newSocket );
+                // console.log( isUserExists );
+                if( isUserExists ) {                    
+                    this.clients[ newClient.id_usuario ].socket_list.push( newSocket );
+                    nuevoCliente = {
+                        id_user: newClient.id_usuario,
+                        id_conection:  newSocket.id_conexion,
+                        conextion_info: newSocket,
+                        msg: 'APPEND',
+                        user_all: null
+                    }
                 }
                 /*
                     Si no hay una conexión vigente solo agregamos el objeto del nuevo cliente
                 */
-                return this.clients[ newClient.id_usuario ] = newClient;
+                else {
+                    this.clients[ newClient.id_usuario ] = newClient;
+                    nuevoCliente = {
+                        id_user: newClient.id_usuario,
+                        id_conection:  newSocket.id_conexion,
+                        conextion_info: newSocket,
+                        msg: 'NEW',
+                        user_all: this.clients[ newClient.id_usuario ]
+                    }
+                }                
             } )
+            return nuevoCliente;
         } catch( err ) {
             console.log( `Error al tratar de agregar un socket desde la IP: ${ socket_info.handshake.address }`.red );
             console.log( err );
@@ -77,6 +110,7 @@ class SocketClientList {
 
     removeClient( id_socket: string ) {
         try {
+            let res : DropUseMsgInterface | null = null;
             let id_user = null;
             // Buscamos el id del usuario dentro de la lista de objetos comparando los socket relacionados al objeto (usuario)
             this.getClientList().map( ( cli: any ) => {
@@ -93,17 +127,40 @@ class SocketClientList {
             // La validación de que si el id_user es igual a 0, se agrego de manera especial para el usuario administrador
             if( id_user || id_user === 0 ) {
                 // ----------------------------->LINEA PELIGROSA ---> PELIGRO ---> :c
+                // TODO Analizar BUG al error anterior
+                console.log( this.getClientList() );
+                console.log( this.clients[ id_user ] );
+                console.log( this.clients[ id_user ].socket_list?.length );
+                
+                
                 if( this.clients[ id_user ].socket_list?.length > 1 ) {            
+                    console.log( 'DROP ONE' );
+                    
                     // Creamos una nueva lista excluyendo el socket con el ID que se quiere eliminar
                     // Esa lista se le asigna al atributo 'socket_list' del objeto del cliente
-                    return this.clients[ id_user ].socket_list = this.clients[ id_user ].socket_list.filter( socket_item => socket_item.id_conexion != id_socket );
+                    this.clients[ id_user ].socket_list = this.clients[ id_user ].socket_list.filter( socket_item => socket_item.id_conexion != id_socket );
+                    res = {
+                        msg: 'ONE',
+                        id_socket: id_socket,
+                        id_user: id_user
+                    }
                 }
                 /*
                     Si solo existe un Socket se elimina directamente el elemento del objeto
-                */
-                return delete this.clients[ `${ id_user }` ];
+                */ 
+                else {
+                    console.log( 'DROP ALL' );
+                    
+                    delete this.clients[ `${ id_user }` ];
+                    res = {
+                        msg: 'ALL',
+                        id_socket: id_socket,
+                        id_user: id_user
+                    }
+                }
             }
             console.log( this.clients );
+            return res;
 
             console.log( 'EL SOCKET A ELIMINAR NO ESTA RELACIONADO CON ALGUN EMPLEADO' );
         } catch( err ) {
