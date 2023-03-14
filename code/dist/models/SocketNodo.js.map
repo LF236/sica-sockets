@@ -1,1 +1,0 @@
-{"version":3,"file":"SocketNodo.js","sourceRoot":"","sources":["../../src/models/SocketNodo.ts"],"names":[],"mappings":";;AAAA,MAAM,UAAU;IAMZ,YAAa,WAAmB,EAAE,MAAc,EAAE,MAAc,EAAE,aAAqB;QACnF,IAAI,CAAC,WAAW,GAAG,WAAW,CAAC;QAC/B,IAAI,CAAC,MAAM,GAAG,MAAM,CAAC;QACrB,IAAI,CAAC,MAAM,GAAG,MAAM,CAAC;QACrB,IAAI,CAAC,qBAAqB,GAAG,aAAa,CAAC;IAC/C,CAAC;CACJ;AAED,kBAAe,UAAU,CAAC"}
