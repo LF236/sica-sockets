@@ -41,7 +41,8 @@ class SocketServer {
                 // Generar un token con la información recibida
                 const token = generateTokenFromInfoSica3( infoQuery );
                 // Agregar el cliente a la lista de clientes                
-                this.clients.addClient( token, `sica3`, socket );                                
+                const newClient = this.clients.addClient( token, `sica3`, socket );                                
+                this.io.emit( 'new-client', newClient );
                 // Send Data to All Clients
                 // this.io.emit( 'current-clients', this.clients.getClientList() );   
             } );
