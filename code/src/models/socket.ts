@@ -1,4 +1,5 @@
 import { Server, Socket } from 'socket.io';
+import { InterfacePostNotaMedica } from '../interfaces/eventOnSica3Hpz';
 import { InterfaceNuevoIngresoHospitalario } from '../interfaces/eventOnSica3NuevoIngreso';
 import { InterfaceZumbido } from '../interfaces/eventOnZumbido';
 const generateTokenFromInfoSica3 = require('../services/generateTokenFromInfoSica3');
@@ -69,6 +70,7 @@ class SocketServer {
 
             // EVENTOS DE SICA 3
             socket.on( 'sica3-nuevo-ingreso', ( data: InterfaceNuevoIngresoHospitalario ) => {
+                console.log( data );
                 // SI LA DATA TIENE EL ATRIBUTO ACCION Y ES IGUAL A 1 QUIERE DECIR QUE VA A CONSULTA DE ADULTOS
                 if( data.accion == '1'  ) {
                     this.io.emit( 'nuevo-ingreso', {
@@ -78,7 +80,24 @@ class SocketServer {
                         'clasificacion': data.clasificacion
                     } );
                 }
+                
+                if( data.accion == '2'  ) {
+                    this.io.emit( 'paciente-a-observacion', {
+                        'tipo_ingreso': data.tipo_ingreso,
+                        'id_cama' : data.id_cama,
+                        'id_paciente': data.id_paciente,
+                        'clasificacion': data.clasificacion
+                    } );
+                }
 
+                if( data.accion == '3'  ) {
+                    this.io.emit( 'paciente-a-casa-centro-salud', {
+                        'tipo_ingreso': data.tipo_ingreso,
+                        'id_cama' : data.id_cama,
+                        'id_paciente': data.id_paciente,
+                        'clasificacion': data.clasificacion
+                    } );
+                }
                 // SI LA DATA ES IGUAL A UNDEFINED QUIERE DECIR QUE VIENE DE OTRO TIPO DE TRIAGE
                 if( data.accion == undefined ) {
                     this.io.emit( 'nuevo-ingreso', {
@@ -88,6 +107,23 @@ class SocketServer {
                     } );
                 }
             } );
+
+            socket.on( 'sica3-accion-post-nota-medica', ( data: InterfacePostNotaMedica ) => {
+                if( data.accion == '2' ) {
+                    this.io.emit( 'paciente-a-observacion', {
+                        'tipo_ingreso': data.tipo_ingreso,
+                        'id_paciente': data.id_paciente,
+                    } );
+                }
+
+                if( data.accion == '2' ) {
+                    this.io.emit( 'paciente-a-casa-centro-salud', {
+                        'tipo_ingreso': data.tipo_ingreso,
+                        'id_paciente': data.id_paciente,
+                    } );
+                }
+
+            }  );
 
             socket.on( 'getAllOnline', ( ) => {
                 console.log( 'test' );
